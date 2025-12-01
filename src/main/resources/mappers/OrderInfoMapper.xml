@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cugb.ai.foodorder.mapper.OrderInfoMapper">
+
+    <resultMap id="OrderInfoResultMap" type="cugb.ai.foodorder.entity.OrderInfo">
+        <id     property="id"              column="id"/>
+        <result property="orderNo"         column="order_no"/>
+        <result property="userId"          column="user_id"/>
+        <result property="status"          column="status"/>
+        <result property="totalAmount"     column="total_amount"/>
+        <result property="payAmount"       column="pay_amount"/>
+        <result property="freightAmount"   column="freight_amount"/>
+        <result property="payTime"         column="pay_time"/>
+        <result property="cancelTime"      column="cancel_time"/>
+        <result property="cancelReason"    column="cancel_reason"/>
+        <result property="receiverName"    column="receiver_name"/>
+        <result property="receiverPhone"   column="receiver_phone"/>
+        <result property="receiverAddress" column="receiver_address"/>
+        <result property="remark"          column="remark"/>
+        <result property="createdAt"       column="created_at"/>
+        <result property="updatedAt"       column="updated_at"/>
+        <result property="deleted"         column="deleted"/>
+    </resultMap>
+
+    <select id="selectById" resultMap="OrderInfoResultMap">
+        SELECT
+            id, order_no, user_id, status,
+            total_amount, pay_amount, freight_amount,
+            pay_time, cancel_time, cancel_reason,
+            receiver_name, receiver_phone, receiver_address, remark,
+            created_at, updated_at, deleted
+        FROM order_info
+        WHERE id = #{id}
+          AND deleted = 0
+            LIMIT 1
+    </select>
+
+    <insert id="insert" parameterType="cugb.ai.foodorder.entity.OrderInfo"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO order_info
+        (order_no, user_id, status, total_amount, pay_amount, freight_amount,
+         receiver_name, receiver_phone, receiver_address, remark)
+        VALUES
+            (#{orderNo}, #{userId}, #{status}, #{totalAmount}, #{payAmount}, #{freightAmount},
+             #{receiverName}, #{receiverPhone}, #{receiverAddress}, #{remark})
+    </insert>
+
+    <select id="selectByIdAndUserId" resultMap="OrderInfoResultMap">
+        SELECT
+            id, order_no, user_id, status,
+            total_amount, pay_amount, freight_amount,
+            pay_time, cancel_time, cancel_reason,
+            receiver_name, receiver_phone, receiver_address, remark,
+            created_at, updated_at, deleted
+        FROM order_info
+        WHERE id = #{id}
+          AND user_id = #{userId}
+          AND deleted = 0
+            LIMIT 1
+    </select>
+
+    <select id="selectPageByUserId" resultMap="OrderInfoResultMap">
+        SELECT
+        id, order_no, user_id, status,
+        total_amount, pay_amount, freight_amount,
+        pay_time, cancel_time, cancel_reason,
+        receiver_name, receiver_phone, receiver_address, remark,
+        created_at, updated_at, deleted
+        FROM order_info
+        WHERE user_id = #{userId}
+        AND deleted = 0
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+        ORDER BY created_at DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="countByUserId" resultType="long">
+        SELECT COUNT(*)
+        FROM order_info
+        WHERE user_id = #{userId}
+        AND deleted = 0
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+    </select>
+
+    <update id="updateStatusToPaid">
+        UPDATE order_info
+        SET status = 1,
+            pay_time = NOW(),
+            updated_at = NOW()
+        WHERE id = #{id}
+          AND status = 0
+          AND deleted = 0
+    </update>
+
+    <update id="updateStatusToCancelled">
+        UPDATE order_info
+        SET status = 2,
+            cancel_time = NOW(),
+            cancel_reason = #{reason},
+            updated_at = NOW()
+        WHERE id = #{id}
+          AND status = 0
+          AND deleted = 0
+    </update>
+
+    <select id="selectPageAdmin" resultMap="OrderInfoResultMap">
+        SELECT
+        id, order_no, user_id, status,
+        total_amount, pay_amount, freight_amount,
+        pay_time, cancel_time, cancel_reason,
+        receiver_name, receiver_phone, receiver_address, remark,
+        created_at, updated_at, deleted
+        FROM order_info
+        WHERE deleted = 0
+        <if test="orderNo != null and orderNo != ''">
+            AND order_no = #{orderNo}
+        </if>
+        <if test="userId != null">
+            AND user_id = #{userId}
+        </if>
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+        <if test="from != null">
+            AND created_at &gt;= #{from}
+        </if>
+        <if test="to != null">
+            AND created_at &lt;= #{to}
+        </if>
+        ORDER BY created_at DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="countAdmin" resultType="long">
+        SELECT COUNT(*)
+        FROM order_info
+        WHERE deleted = 0
+        <if test="orderNo != null and orderNo != ''">
+            AND order_no = #{orderNo}
+        </if>
+        <if test="userId != null">
+            AND user_id = #{userId}
+        </if>
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+        <if test="from != null">
+            AND created_at &gt;= #{from}
+        </if>
+        <if test="to != null">
+            AND created_at &lt;= #{to}
+        </if>
+    </select>
+
+    <update id="updateStatusToCompleted">
+        UPDATE order_info
+        SET status = 3,
+            updated_at = NOW()
+        WHERE id = #{id}
+          AND deleted = 0
+    </update>
+
+    <update id="adminCancelOrder">
+        UPDATE order_info
+        SET status = 2,
+            cancel_reason = #{reason},
+            cancel_time = NOW(),
+            updated_at = NOW()
+        WHERE id = #{id}
+          AND deleted = 0
+          AND status != 2
+    </update>
+</mapper>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cugb.ai.foodorder.mapper.AddressMapper">
+
+    <resultMap id="AddressResultMap" type="cugb.ai.foodorder.entity.Address">
+        <id     property="id"             column="id"/>
+        <result property="userId"         column="user_id"/>
+        <result property="receiverName"   column="receiver_name"/>
+        <result property="receiverPhone"  column="receiver_phone"/>
+        <result property="detailAddress"  column="detail_address"/>
+        <result property="isDefault"      column="is_default"/>
+        <result property="deleted"        column="deleted"/>
+        <result property="createdAt"      column="created_at"/>
+        <result property="updatedAt"      column="updated_at"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="cugb.ai.foodorder.entity.Address"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_address
+        (user_id, receiver_name, receiver_phone, detail_address, is_default, deleted)
+        VALUES
+            (#{userId}, #{receiverName}, #{receiverPhone}, #{detailAddress}, #{isDefault}, #{deleted})
+    </insert>
+
+    <update id="update" parameterType="cugb.ai.foodorder.entity.Address">
+        UPDATE user_address
+        SET
+            receiver_name   = #{receiverName},
+            receiver_phone  = #{receiverPhone},
+            detail_address  = #{detailAddress},
+            is_default      = #{isDefault},
+            updated_at      = NOW()
+        WHERE id = #{id}
+          AND user_id = #{userId}
+          AND deleted = 0
+    </update>
+
+    <select id="selectByIdAndUserId" resultMap="AddressResultMap">
+        SELECT
+            id, user_id, receiver_name, receiver_phone, detail_address,
+            is_default, deleted, created_at, updated_at
+        FROM user_address
+        WHERE id = #{id}
+          AND user_id = #{userId}
+          AND deleted = 0
+            LIMIT 1
+    </select>
+
+    <select id="selectByUserId" resultMap="AddressResultMap">
+        SELECT
+            id, user_id, receiver_name, receiver_phone, detail_address,
+            is_default, deleted, created_at, updated_at
+        FROM user_address
+        WHERE user_id = #{userId}
+          AND deleted = 0
+        ORDER BY is_default DESC, updated_at DESC
+    </select>
+
+    <select id="selectDefaultByUserId" resultMap="AddressResultMap">
+        SELECT
+            id, user_id, receiver_name, receiver_phone, detail_address,
+            is_default, deleted, created_at, updated_at
+        FROM user_address
+        WHERE user_id = #{userId}
+          AND deleted = 0
+          AND is_default = 1
+            LIMIT 1
+    </select>
+
+    <update id="clearDefaultByUserId">
+        UPDATE user_address
+        SET is_default = 0, updated_at = NOW()
+        WHERE user_id = #{userId}
+          AND deleted = 0
+          AND is_default = 1
+    </update>
+
+    <update id="softDeleteByIdAndUserId">
+        UPDATE user_address
+        SET deleted = 1, updated_at = NOW()
+        WHERE id = #{id}
+          AND user_id = #{userId}
+          AND deleted = 0
+    </update>
+
+</mapper>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cugb.ai.foodorder.mapper.CartItemMapper">
+
+    <resultMap id="CartItemResultMap" type="cugb.ai.foodorder.entity.CartItem">
+        <id     property="id"        column="id"/>
+        <result property="userId"    column="user_id"/>
+        <result property="dishId"    column="dish_id"/>
+        <result property="quantity"  column="quantity"/>
+        <result property="checked"   column="checked"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <resultMap id="CartItemDetailResultMap" type="cugb.ai.foodorder.vo.CartItemVO">
+        <id     property="cartItemId" column="cart_item_id"/>
+        <result property="dishId"     column="dish_id"/>
+        <result property="dishName"   column="dish_name"/>
+        <result property="dishImage"  column="dish_image"/>
+        <result property="price"      column="price"/>
+        <result property="quantity"   column="quantity"/>
+        <result property="checked"    column="checked"/>
+        <!-- subTotal 在 service 里算，这里不用映射 -->
+    </resultMap>
+
+    <select id="selectByUserIdAndDishId" resultMap="CartItemResultMap">
+        SELECT id, user_id, dish_id, quantity, checked, created_at, updated_at
+        FROM cart_item
+        WHERE user_id = #{userId}
+          AND dish_id = #{dishId}
+            LIMIT 1
+    </select>
+
+    <select id="selectByUserId" resultMap="CartItemResultMap">
+        SELECT id, user_id, dish_id, quantity, checked, created_at, updated_at
+        FROM cart_item
+        WHERE user_id = #{userId}
+        ORDER BY created_at DESC
+    </select>
+
+    <insert id="insert" parameterType="cugb.ai.foodorder.entity.CartItem"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cart_item (user_id, dish_id, quantity, checked)
+        VALUES (#{userId}, #{dishId}, #{quantity}, #{checked})
+    </insert>
+
+    <update id="update" parameterType="cugb.ai.foodorder.entity.CartItem">
+        UPDATE cart_item
+        SET
+            quantity = #{quantity},
+            checked = #{checked},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteByUserIdAndDishId">
+        DELETE FROM cart_item
+        WHERE user_id = #{userId}
+          AND dish_id = #{dishId}
+    </delete>
+
+    <delete id="deleteByUserId">
+        DELETE FROM cart_item
+        WHERE user_id = #{userId}
+    </delete>
+
+    <!-- 带菜品信息的购物车列表 -->
+    <select id="selectDetailByUserId" resultMap="CartItemDetailResultMap">
+        SELECT
+            c.id          AS cart_item_id,
+            c.dish_id     AS dish_id,
+            c.quantity    AS quantity,
+            c.checked     AS checked,
+            d.name        AS dish_name,
+            d.image       AS dish_image,
+            d.price       AS price
+        FROM cart_item c
+                 JOIN dish d ON c.dish_id = d.id
+        WHERE c.user_id = #{userId}
+        ORDER BY c.created_at DESC
+    </select>
+
+</mapper>

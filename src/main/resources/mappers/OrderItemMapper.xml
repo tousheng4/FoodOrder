@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cugb.ai.foodorder.mapper.OrderItemMapper">
+
+    <resultMap id="OrderItemResultMap" type="cugb.ai.foodorder.entity.OrderItem">
+        <id     property="id"        column="id"/>
+        <result property="orderId"   column="order_id"/>
+        <result property="dishId"    column="dish_id"/>
+        <result property="dishName"  column="dish_name"/>
+        <result property="dishImage" column="dish_image"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="quantity"  column="quantity"/>
+        <result property="subTotal"  column="sub_total"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <insert id="batchInsert">
+        INSERT INTO order_item
+        (order_id, dish_id, dish_name, dish_image, unit_price, quantity, sub_total)
+        VALUES
+        <foreach collection="items" item="item" separator=",">
+            (#{item.orderId}, #{item.dishId}, #{item.dishName}, #{item.dishImage},
+            #{item.unitPrice}, #{item.quantity}, #{item.subTotal})
+        </foreach>
+    </insert>
+
+    <select id="selectByOrderId" resultMap="OrderItemResultMap">
+        SELECT
+            id, order_id, dish_id, dish_name, dish_image,
+            unit_price, quantity, sub_total,
+            created_at, updated_at
+        FROM order_item
+        WHERE order_id = #{orderId}
+        ORDER BY id ASC
+    </select>
+
+    <select id="selectOneByOrderIdAndDishId" resultMap="OrderItemResultMap">
+        SELECT
+            id, order_id, dish_id, dish_name, dish_image,
+            unit_price, quantity, sub_total,
+            created_at, updated_at
+        FROM order_item
+        WHERE order_id = #{orderId}
+          AND dish_id = #{dishId}
+            LIMIT 1
+    </select>
+
+</mapper>

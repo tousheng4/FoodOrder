@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cugb.ai.foodorder.mapper.UserMapper">
+
+    <resultMap id="UserResultMap" type="cugb.ai.foodorder.entity.User">
+        <id     property="id"            column="id"/>
+        <result property="username"      column="username"/>
+        <result property="passwordHash"  column="password_hash"/>
+        <result property="nickname"      column="nickname"/>
+        <result property="phone"         column="phone"/>
+        <result property="avatar"        column="avatar"/>
+        <result property="role"          column="role"/>
+        <result property="status"        column="status"/>
+        <result property="lastLoginAt"   column="last_login_at"/>
+        <result property="createdAt"     column="created_at"/>
+        <result property="updatedAt"     column="updated_at"/>
+    </resultMap>
+
+    <select id="selectByUsername" resultMap="UserResultMap">
+        SELECT
+            id, username, password_hash, nickname, phone, avatar,
+            role, status, last_login_at, created_at, updated_at
+        FROM sys_user
+        WHERE username = #{username}
+            LIMIT 1
+    </select>
+
+    <select id="selectById" resultMap="UserResultMap">
+        SELECT
+            id, username, password_hash, nickname, phone, avatar,
+            role, status, last_login_at, created_at, updated_at
+        FROM sys_user
+        WHERE id = #{id}
+            LIMIT 1
+    </select>
+
+    <insert id="insert" parameterType="cugb.ai.foodorder.entity.User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sys_user
+            (username, password_hash, nickname, phone, avatar, role, status)
+        VALUES
+            (#{username}, #{passwordHash}, #{nickname}, #{phone}, #{avatar}, #{role}, #{status})
+    </insert>
+
+    <update id="updateLastLoginAt">
+        UPDATE sys_user
+        SET last_login_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectPage" resultMap="UserResultMap">
+        SELECT
+        id, username, password_hash, nickname, phone, avatar,
+        role, status, last_login_at, created_at, updated_at
+        FROM sys_user
+        WHERE 1=1
+        <if test="username != null and username != ''">
+            AND username LIKE CONCAT('%', #{username}, '%')
+        </if>
+        <if test="role != null">
+            AND role = #{role}
+        </if>
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+        ORDER BY created_at DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(*)
+        FROM sys_user
+        WHERE 1=1
+        <if test="username != null and username != ''">
+            AND username LIKE CONCAT('%', #{username}, '%')
+        </if>
+        <if test="role != null">
+            AND role = #{role}
+        </if>
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+    </select>
+
+    <update id="updateStatus">
+        UPDATE sys_user
+        SET status = #{status}, updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateRole">
+        UPDATE sys_user
+        SET role = #{role}, updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+
+</mapper>
