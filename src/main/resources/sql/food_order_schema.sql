@@ -58,20 +58,31 @@ CREATE TABLE category (
 -- =====================================================
 -- 3. 菜品表 dish
 -- =====================================================
+USE food_order;
+
 CREATE TABLE dish (
-                      id           BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '菜品ID',
-                      name         VARCHAR(100) NOT NULL COMMENT '菜品名称',
-                      description  VARCHAR(500) DEFAULT NULL COMMENT '菜品描述',
-                      image        VARCHAR(255) DEFAULT NULL COMMENT '图片URL',
-                      price        DECIMAL(10,2) NOT NULL COMMENT '单价',
-                      category_id  BIGINT UNSIGNED NOT NULL COMMENT '所属分类ID',
-                      status       TINYINT NOT NULL DEFAULT 1 COMMENT '状态：0=下架，1=上架',
-                      deleted      TINYINT NOT NULL DEFAULT 0 COMMENT '逻辑删除：0=正常，1=删除',
-                      created_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                      updated_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                      id              BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+                      category_id     BIGINT UNSIGNED NOT NULL COMMENT '分类ID',
+                      name            VARCHAR(100) NOT NULL COMMENT '菜品名称',
+                      price           DECIMAL(10,2) NOT NULL COMMENT '单价',
+                      image           VARCHAR(255) DEFAULT NULL COMMENT '菜品图片URL',
+                      description     VARCHAR(500) DEFAULT NULL COMMENT '菜品描述',
+                      status          TINYINT NOT NULL DEFAULT 1 COMMENT '状态：0=下架，1=上架',
+                      stock           INT NOT NULL DEFAULT 9999 COMMENT '库存',
+                      sales           INT NOT NULL DEFAULT 0 COMMENT '销量',
+                      deleted         TINYINT NOT NULL DEFAULT 0 COMMENT '逻辑删除：0=否，1=是',
+                      created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                      updated_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+
                       PRIMARY KEY (id),
-                      KEY idx_category_status (category_id, status)
+                      KEY idx_category (category_id),
+                      KEY idx_status (status),
+                      KEY idx_name (name),
+                      CONSTRAINT fk_dish_category
+                          FOREIGN KEY (category_id) REFERENCES category (id)
+                              ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='菜品表';
+
 
 -- =====================================================
 -- 4. 用户收货地址表 user_address
