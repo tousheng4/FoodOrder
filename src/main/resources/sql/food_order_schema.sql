@@ -88,18 +88,21 @@ CREATE TABLE dish (
 -- 4. 用户收货地址表 user_address
 -- =====================================================
 CREATE TABLE user_address (
-                              id              BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-                              user_id         BIGINT UNSIGNED NOT NULL COMMENT '用户ID',
-                              receiver_name   VARCHAR(50)  NOT NULL COMMENT '收货人姓名',
-                              receiver_phone  VARCHAR(20)  NOT NULL COMMENT '收货人手机号',
-                              detail_address  VARCHAR(255) NOT NULL COMMENT '详细收货地址',
-                              is_default      TINYINT NOT NULL DEFAULT 0 COMMENT '是否默认地址：0=否，1=是',
-                              created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                              updated_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                              id               BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+                              user_id          BIGINT UNSIGNED NOT NULL COMMENT '用户ID',
+                              receiver_name    VARCHAR(50) NOT NULL COMMENT '收货人姓名',
+                              receiver_phone   VARCHAR(20) NOT NULL COMMENT '收货人电话',
+                              detail_address   VARCHAR(255) NOT NULL COMMENT '详细地址',
+                              is_default       TINYINT NOT NULL DEFAULT 0 COMMENT '是否默认地址：0=否，1=是',
+                              deleted          TINYINT NOT NULL DEFAULT 0 COMMENT '逻辑删除：0=否，1=是',
+                              created_at       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                              updated_at       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+
                               PRIMARY KEY (id),
                               KEY idx_user (user_id),
-                              KEY idx_user_default (user_id, is_default)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户收货地址表';
+                              KEY idx_default (user_id, is_default)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户收货地址';
+
 
 -- =====================================================
 -- 5. 购物车条目表 cart_item
@@ -108,9 +111,6 @@ CREATE TABLE cart_item (
                            id           BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                            user_id      BIGINT UNSIGNED NOT NULL COMMENT '用户ID',
                            dish_id      BIGINT UNSIGNED NOT NULL COMMENT '菜品ID',
-                           dish_name    VARCHAR(100) DEFAULT NULL COMMENT '加入时的菜品名称冗余',
-                           dish_image   VARCHAR(255) DEFAULT NULL COMMENT '加入时的菜品图片冗余',
-                           price        DECIMAL(10,2) NOT NULL COMMENT '加入时的单价',
                            quantity     INT NOT NULL DEFAULT 1 COMMENT '数量',
                            checked      TINYINT NOT NULL DEFAULT 1 COMMENT '是否选中：0=未选中，1=选中',
                            created_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '加入购物车时间',
