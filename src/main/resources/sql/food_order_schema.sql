@@ -103,7 +103,6 @@ CREATE TABLE user_address (
                               KEY idx_default (user_id, is_default)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户收货地址';
 
-
 -- =====================================================
 -- 5. 购物车条目表 cart_item
 -- =====================================================

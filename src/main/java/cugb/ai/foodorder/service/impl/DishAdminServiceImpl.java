@@ -4,22 +4,29 @@ import cugb.ai.foodorder.common.BusinessException;
 import cugb.ai.foodorder.common.ErrorCode;
 import cugb.ai.foodorder.common.PageResult;
 import cugb.ai.foodorder.dto.AdminSaveDishRequest;
+import cugb.ai.foodorder.dto.DishSearchRequest;
+import cugb.ai.foodorder.entity.Category;
 import cugb.ai.foodorder.entity.Dish;
+import cugb.ai.foodorder.mapper.CategoryMapper;
 import cugb.ai.foodorder.mapper.DishMapper;
 import cugb.ai.foodorder.service.DishAdminService;
 import cugb.ai.foodorder.vo.AdminDishVO;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DishAdminServiceImpl implements DishAdminService {
 
     private final DishMapper dishMapper;
+    private final CategoryMapper categoryMapper;
 
-    public DishAdminServiceImpl(DishMapper dishMapper) {
+    public DishAdminServiceImpl(DishMapper dishMapper, CategoryMapper categoryMapper) {
         this.dishMapper = dishMapper;
+        this.categoryMapper = categoryMapper;
     }
 
     @Override
@@ -91,4 +98,39 @@ public class DishAdminServiceImpl implements DishAdminService {
     public void deleteDish(Long id) {
         dishMapper.logicalDelete(id);
     }
+
+    public PageResult<AdminDishVO> searchDishes(DishSearchRequest req) {
+        Integer page = Math.max(req.getPage(), 1);
+        Integer size = Math.max(req.getSize(), 10);
+        int offset = (page - 1) * size;
+
+        // 调用Mapper查询
+        Long total = dishMapper.count(req);
+        List<Dish> dishList = dishMapper.search(req, offset, size);
+
+        // 转换为VO并补充分类名称
+        List<AdminDishVO> voList = dishList.stream().map(dish -> {
+            AdminDishVO vo = new AdminDishVO();
+            vo.setId(dish.getId());
+            vo.setName(dish.getName());
+            vo.setDescription(dish.getDescription());
+            vo.setImage(dish.getImage());
+            vo.setPrice(dish.getPrice());
+            vo.setCategoryId(dish.getCategoryId());
+            vo.setStatus(dish.getStatus());
+            vo.setCreatedAt(dish.getCreatedAt());
+
+            // 查询分类名称（通过CategoryMapper）
+            if (dish.getCategoryId() != null) {
+                Category category = categoryMapper.selectById(dish.getCategoryId()); // 需要在CategoryMapper中新增selectById方法
+                if (category != null) {
+                    vo.setCategoryName(category.getName());
+                }
+            }
+            return vo;
+        }).collect(Collectors.toList());
+
+        return PageResult.of(voList, total, page, size);
+    }
+
 }

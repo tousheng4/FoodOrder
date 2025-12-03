@@ -2,6 +2,7 @@ package cugb.ai.foodorder.service.impl;
 
 import cugb.ai.foodorder.common.PageResult;
 import cugb.ai.foodorder.dto.DishQueryRequest;
+import cugb.ai.foodorder.dto.DishSearchRequest;
 import cugb.ai.foodorder.entity.Dish;
 import cugb.ai.foodorder.mapper.DishMapper;
 import cugb.ai.foodorder.service.DishService;
@@ -43,6 +44,23 @@ public class DishServiceImpl implements DishService {
     @Override
     public Dish getDishDetail(Long id) {
         return dishMapper.selectById(id);
+    }
+
+    @Override
+    public PageResult<Dish> searchDishes(DishSearchRequest req) {
+        Integer page = Math.max(req.getPage(), 1);
+        Integer size = Math.max(req.getSize(), 10);
+        int offset = (page - 1) * size;
+
+        // 用户端默认只查询上架商品
+        if (req.getStatus() == null) {
+            req.setStatus(1);
+        }
+
+        Long total = dishMapper.count(req);
+        List<Dish> list = dishMapper.search(req, offset, size);
+
+        return PageResult.of(list, total, page, size);
     }
 
 }

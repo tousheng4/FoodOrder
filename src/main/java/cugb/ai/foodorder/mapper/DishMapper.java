@@ -1,5 +1,6 @@
 package cugb.ai.foodorder.mapper;
 
+import cugb.ai.foodorder.dto.DishSearchRequest;
 import cugb.ai.foodorder.entity.Dish;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -45,4 +46,10 @@ public interface DishMapper {
     Long countAdmin(@Param("name") String name,
                     @Param("categoryId") Long categoryId,
                     @Param("status") Integer status);
+
+    List<Dish> search(@Param("req") DishSearchRequest req,
+                      @Param("offset") Integer offset,
+                      @Param("pageSize") Integer pageSize);
+
+    Long count(@Param("req") DishSearchRequest req);
 }

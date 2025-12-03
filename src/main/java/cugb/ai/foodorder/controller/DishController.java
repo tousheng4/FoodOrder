@@ -3,6 +3,7 @@ package cugb.ai.foodorder.controller;
 import cugb.ai.foodorder.common.PageResult;
 import cugb.ai.foodorder.common.Result;
 import cugb.ai.foodorder.dto.DishQueryRequest;
+import cugb.ai.foodorder.dto.DishSearchRequest;
 import cugb.ai.foodorder.entity.Dish;
 import cugb.ai.foodorder.service.DishService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,5 +30,10 @@ public class DishController {
     public Result<Dish> detail(@PathVariable Long id){
         Dish dish=dishService.getDishDetail(id);
         return Result.success(dish);
+    }
+
+    @GetMapping("/search")
+    public Result<PageResult<Dish>> searchDishes(DishSearchRequest req) {
+        return Result.success(dishService.searchDishes(req));
     }
 }

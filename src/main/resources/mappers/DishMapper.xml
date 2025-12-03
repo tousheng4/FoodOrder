@@ -127,4 +127,79 @@
         </if>
     </select>
 
+    <select id="search" resultType="cugb.ai.foodorder.entity.Dish">
+        SELECT
+        id,
+        name,
+        description,
+        image,
+        price,
+        category_id,
+        status,
+        deleted,
+        created_at,
+        updated_at
+        FROM dish
+        <where>
+            <if test="req.keyword != null and req.keyword != ''">
+                AND (
+                name LIKE CONCAT('%', #{req.keyword}, '%')
+                OR description LIKE CONCAT('%', #{req.keyword}, '%')
+                )
+            </if>
+
+            <if test="req.categoryId != null">
+                AND category_id = #{req.categoryId}
+            </if>
+
+            <if test="req.status != null">
+                AND status = #{req.status}
+            </if>
+
+            <if test="req.minPrice != null">
+                AND price &gt;= #{req.minPrice}
+            </if>
+
+            <if test="req.maxPrice != null">
+                AND price &lt;= #{req.maxPrice}
+            </if>
+
+            <!-- 逻辑删除条件 -->
+            AND deleted = 0
+        </where>
+        ORDER BY created_at DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(1)
+        FROM dish
+        <where>
+            <if test="req.keyword != null and req.keyword != ''">
+                AND (
+                name LIKE CONCAT('%', #{req.keyword}, '%')
+                OR description LIKE CONCAT('%', #{req.keyword}, '%')
+                )
+            </if>
+
+            <if test="req.categoryId != null">
+                AND category_id = #{req.categoryId}
+            </if>
+
+            <if test="req.status != null">
+                AND status = #{req.status}
+            </if>
+
+            <if test="req.minPrice != null">
+                AND price &gt;= #{req.minPrice}
+            </if>
+
+            <if test="req.maxPrice != null">
+                AND price &lt;= #{req.maxPrice}
+            </if>
+
+            AND deleted = 0
+        </where>
+    </select>
+
 </mapper>

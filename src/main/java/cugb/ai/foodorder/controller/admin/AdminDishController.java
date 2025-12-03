@@ -3,6 +3,7 @@ package cugb.ai.foodorder.controller.admin;
 import cugb.ai.foodorder.common.PageResult;
 import cugb.ai.foodorder.common.Result;
 import cugb.ai.foodorder.dto.AdminSaveDishRequest;
+import cugb.ai.foodorder.dto.DishSearchRequest;
 import cugb.ai.foodorder.security.AdminAuth;
 import cugb.ai.foodorder.service.DishAdminService;
 import cugb.ai.foodorder.vo.AdminDishVO;
@@ -61,5 +62,11 @@ public class AdminDishController {
         AdminAuth.requireAdmin();
         dishAdminService.deleteDish(id);
         return Result.success();
+    }
+
+    @GetMapping("/search")
+    public Result<PageResult<AdminDishVO>> searchDishes(DishSearchRequest req) {
+        AdminAuth.requireAdmin();
+        return Result.success(dishAdminService.searchDishes(req));
     }
 }

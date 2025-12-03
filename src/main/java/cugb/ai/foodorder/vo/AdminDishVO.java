@@ -20,6 +20,8 @@ public class AdminDishVO {
 
     private Long categoryId;
 
+    private String categoryName; // 新增：分类名称
+
     private Integer status;
 
     private LocalDateTime createdAt;

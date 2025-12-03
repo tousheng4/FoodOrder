@@ -2,6 +2,7 @@ package cugb.ai.foodorder.service;
 
 import cugb.ai.foodorder.common.PageResult;
 import cugb.ai.foodorder.dto.AdminSaveDishRequest;
+import cugb.ai.foodorder.dto.DishSearchRequest;
 import cugb.ai.foodorder.vo.AdminDishVO;
 
 public interface DishAdminService {
@@ -16,4 +17,6 @@ public interface DishAdminService {
     void updateDishStatus(Long id, Integer status);
 
     void deleteDish(Long id);
+
+    PageResult<AdminDishVO> searchDishes(DishSearchRequest req);
 }
