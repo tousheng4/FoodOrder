@@ -31,4 +31,6 @@ public interface UserMapper {
 
     int updateRole(@Param("id") Long id,
                    @Param("role") Integer role);
+
+    int updateUserInfo(User user);
 }

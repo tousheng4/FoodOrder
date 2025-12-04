@@ -96,5 +96,18 @@
         WHERE id = #{id}
     </update>
 
+    <update id="updateUserInfo" parameterType="cugb.ai.foodorder.entity.User">
+        UPDATE sys_user
+        <set>
+            <if test="nickname != null">
+                nickname = #{nickname},
+            </if>
+            <if test="avatar != null">
+                avatar = #{avatar},
+            </if>
+            updated_at = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
 
 </mapper>

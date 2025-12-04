@@ -11,7 +11,6 @@ import cugb.ai.foodorder.mapper.CategoryMapper;
 import cugb.ai.foodorder.mapper.DishMapper;
 import cugb.ai.foodorder.service.DishAdminService;
 import cugb.ai.foodorder.vo.AdminDishVO;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
