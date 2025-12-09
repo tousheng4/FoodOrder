@@ -8,6 +8,8 @@ import java.util.List;
 
 @Mapper
 public interface UserMapper {
+    Long countAll();
+
     User selectByUsername(@Param("username") String username);
 
     User selectById(@Param("id") Long id);

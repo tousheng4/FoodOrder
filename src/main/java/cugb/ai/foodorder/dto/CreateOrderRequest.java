@@ -21,3 +21,4 @@ public class CreateOrderRequest {
     /** 用户备注，可选 */
     private String remark;
 }
+

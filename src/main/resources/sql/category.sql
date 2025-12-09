@@ -3,6 +3,9 @@ USE food_order;
 -- 如需清理这批数据再重插，可以手动先执行：
 -- DELETE FROM category WHERE id BETWEEN 20001 AND 20080;
 
+INSERT INTO category(name, sort, status)
+VALUES ('主食', 100, 1), ('小吃', 90, 1), ('饮料', 80, 1);
+
 INSERT INTO category
 (id, name, sort, status, created_at, updated_at)
 VALUES

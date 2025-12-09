@@ -44,6 +44,8 @@ public interface OrderInfoMapper {
                     @Param("from") LocalDateTime from,
                     @Param("to") LocalDateTime to);
 
+    Double countTotalSales();
+
     int updateStatusToCompleted(@Param("id") Long id);
 
     /**

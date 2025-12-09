@@ -4,11 +4,14 @@ import cugb.ai.foodorder.dto.LoginRequest;
 import cugb.ai.foodorder.dto.RegisterRequest;
 import cugb.ai.foodorder.dto.UpdateUserInfoRequest;
 import cugb.ai.foodorder.vo.LoginResponse;
+import cugb.ai.foodorder.vo.UserVO;
 
 public interface UserService {
     void register(RegisterRequest req);
 
     LoginResponse login(LoginRequest req);
 
-    void updateUserInfo(UpdateUserInfoRequest req);
+    void updateUserInfo(Long userId, UpdateUserInfoRequest req);
+
+    UserVO getUserInfo(Long userId);
 }

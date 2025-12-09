@@ -8,7 +8,6 @@ import cugb.ai.foodorder.dto.UpdateUserInfoRequest;
 import cugb.ai.foodorder.entity.User;
 import cugb.ai.foodorder.mapper.UserMapper;
 import cugb.ai.foodorder.security.JwtUtil;
-import cugb.ai.foodorder.security.UserContext;
 import cugb.ai.foodorder.service.UserService;
 import cugb.ai.foodorder.storage.OssService;
 import cugb.ai.foodorder.vo.LoginResponse;
@@ -89,13 +88,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void updateUserInfo(UpdateUserInfoRequest req) {
-        UserContext.LoginUser loginUser = UserContext.get();
-        if (loginUser == null) {
-            throw new BusinessException(ErrorCode.UNAUTHORIZED, "用户未登录");
-        }
-        Long userId = loginUser.getUserId();
-
+    public void updateUserInfo(Long userId, UpdateUserInfoRequest req) {
         // 查询当前用户信息
         User currentUser = userMapper.selectById(userId);
         if (currentUser == null) {
@@ -138,5 +131,22 @@ public class UserServiceImpl implements UserService {
         if (hasUpdate) {
             userMapper.updateUserInfo(updateUser);
         }
+    }
+
+    @Override
+    public UserVO getUserInfo(Long userId) {
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND, "用户不存在");
+        }
+        UserVO userVO = new UserVO();
+        userVO.setId(user.getId());
+        userVO.setUsername(user.getUsername());
+        userVO.setNickname(user.getNickname());
+        userVO.setPhone(user.getPhone());
+        userVO.setAvatar(user.getAvatar());
+        userVO.setRole(user.getRole());
+        userVO.setStatus(user.getStatus());
+        return userVO;
     }
 }
