@@ -6,14 +6,14 @@
 <mapper namespace="cugb.ai.foodorder.mapper.OrderItemMapper">
 
     <resultMap id="OrderItemResultMap" type="cugb.ai.foodorder.entity.OrderItem">
-        <id     property="id"        column="id"/>
-        <result property="orderId"   column="order_id"/>
-        <result property="dishId"    column="dish_id"/>
-        <result property="dishName"  column="dish_name"/>
+        <id property="id" column="id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="dishId" column="dish_id"/>
+        <result property="dishName" column="dish_name"/>
         <result property="dishImage" column="dish_image"/>
         <result property="unitPrice" column="unit_price"/>
-        <result property="quantity"  column="quantity"/>
-        <result property="subTotal"  column="sub_total"/>
+        <result property="quantity" column="quantity"/>
+        <result property="subTotal" column="sub_total"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
     </resultMap>
@@ -29,24 +29,44 @@
     </insert>
 
     <select id="selectByOrderId" resultMap="OrderItemResultMap">
-        SELECT
-            id, order_id, dish_id, dish_name, dish_image,
-            unit_price, quantity, sub_total,
-            created_at, updated_at
+        SELECT id,
+               order_id,
+               dish_id,
+               dish_name,
+               dish_image,
+               unit_price,
+               quantity,
+               sub_total,
+               created_at,
+               updated_at
         FROM order_item
         WHERE order_id = #{orderId}
         ORDER BY id ASC
     </select>
 
     <select id="selectOneByOrderIdAndDishId" resultMap="OrderItemResultMap">
-        SELECT
-            id, order_id, dish_id, dish_name, dish_image,
-            unit_price, quantity, sub_total,
-            created_at, updated_at
+        SELECT id,
+               order_id,
+               dish_id,
+               dish_name,
+               dish_image,
+               unit_price,
+               quantity,
+               sub_total,
+               created_at,
+               updated_at
         FROM order_item
         WHERE order_id = #{orderId}
           AND dish_id = #{dishId}
-            LIMIT 1
+        LIMIT 1
+    </select>
+
+    <select id="listDishIdsBySales" resultType="long">
+        SELECT dish_id
+        FROM order_item
+        GROUP BY dish_id
+        ORDER BY count(*) DESC
+        LIMIT #{num};
     </select>
 
 </mapper>
