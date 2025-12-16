@@ -35,6 +35,8 @@ public interface ReviewMapper {
 
     int deleteById(@Param("id") Long id);
 
+    List<Long> listDishIdsByRating(@Param("num") Long num);
+
     /**
      * 后台按条件查评价
      */

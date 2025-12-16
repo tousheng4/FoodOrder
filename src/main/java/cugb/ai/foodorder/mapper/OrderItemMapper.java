@@ -15,4 +15,6 @@ public interface OrderItemMapper {
 
     OrderItem selectOneByOrderIdAndDishId(@Param("orderId") Long orderId,
                                           @Param("dishId") Long dishId);
+
+    List<Long> listDishIdsBySales(@Param("num") Long num);
 }

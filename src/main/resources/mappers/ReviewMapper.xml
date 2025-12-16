@@ -7,50 +7,57 @@
 
     <!-- 实体映射 -->
     <resultMap id="ReviewResultMap" type="cugb.ai.foodorder.entity.Review">
-        <id     property="id"           column="id"/>
-        <result property="userId"       column="user_id"/>
-        <result property="orderId"      column="order_id"/>
-        <result property="orderItemId"  column="order_item_id"/>
-        <result property="dishId"       column="dish_id"/>
-        <result property="rating"       column="rating"/>
-        <result property="content"      column="content"/>
-        <result property="images"       column="images"/>
-        <result property="status"       column="status"/>
-        <result property="createdAt"    column="created_at"/>
-        <result property="updatedAt"    column="updated_at"/>
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="orderItemId" column="order_item_id"/>
+        <result property="dishId" column="dish_id"/>
+        <result property="rating" column="rating"/>
+        <result property="content" column="content"/>
+        <result property="images" column="images"/>
+        <result property="status" column="status"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
     </resultMap>
 
     <!-- VO 映射，用于列表展示 -->
     <resultMap id="ReviewVOResultMap" type="cugb.ai.foodorder.vo.ReviewVO">
-        <id     property="id"          column="id"/>
-        <result property="userId"      column="user_id"/>
-        <result property="username"    column="username"/>
-        <result property="nickname"    column="nickname"/>
-        <result property="dishId"      column="dish_id"/>
-        <result property="dishName"    column="dish_name"/>
-        <result property="rating"      column="rating"/>
-        <result property="content"     column="content"/>
-        <result property="createdAt"   column="created_at"/>
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="username" column="username"/>
+        <result property="nickname" column="nickname"/>
+        <result property="dishId" column="dish_id"/>
+        <result property="dishName" column="dish_name"/>
+        <result property="rating" column="rating"/>
+        <result property="content" column="content"/>
+        <result property="createdAt" column="created_at"/>
     </resultMap>
 
     <insert id="insert" parameterType="cugb.ai.foodorder.entity.Review"
             useGeneratedKeys="true" keyProperty="id">
         INSERT INTO dish_review
         (user_id, order_id, order_item_id, dish_id, rating, content, images, status)
-        VALUES
-            (#{userId}, #{orderId}, #{orderItemId}, #{dishId},
-             #{rating}, #{content}, #{images}, #{status})
+        VALUES (#{userId}, #{orderId}, #{orderItemId}, #{dishId},
+                #{rating}, #{content}, #{images}, #{status})
     </insert>
 
     <select id="selectByUserAndOrderAndDish" resultMap="ReviewResultMap">
-        SELECT
-            id, user_id, order_id, order_item_id, dish_id,
-            rating, content, images, status, created_at, updated_at
+        SELECT id,
+               user_id,
+               order_id,
+               order_item_id,
+               dish_id,
+               rating,
+               content,
+               images,
+               status,
+               created_at,
+               updated_at
         FROM dish_review
         WHERE user_id = #{userId}
           AND order_id = #{orderId}
           AND dish_id = #{dishId}
-            LIMIT 1
+        LIMIT 1
     </select>
 
     <!-- 统计某菜品的评价数量 -->
@@ -95,33 +102,43 @@
 
     <!-- 我的评价列表（带菜品名） -->
     <select id="listByUser" resultMap="ReviewVOResultMap">
-        SELECT
-            r.id,
-            r.user_id,
-            u.username,
-            u.nickname,
-            r.dish_id,
-            d.name AS dish_name,
-            r.rating,
-            r.content,
-            r.created_at
+        SELECT r.id,
+               r.user_id,
+               u.username,
+               u.nickname,
+               r.dish_id,
+               d.name AS dish_name,
+               r.rating,
+               r.content,
+               r.created_at
         FROM dish_review r
                  JOIN sys_user u ON r.user_id = u.id
                  JOIN dish d ON r.dish_id = d.id
         WHERE r.user_id = #{userId}
         ORDER BY r.created_at DESC
-            LIMIT #{offset}, #{size}
+        LIMIT #{offset}, #{size}
     </select>
 
     <update id="updateStatus">
         UPDATE dish_review
-        SET status = #{status}, updated_at = NOW()
+        SET status     = #{status},
+            updated_at = NOW()
         WHERE id = #{id}
     </update>
 
     <delete id="deleteById">
-        DELETE FROM dish_review WHERE id = #{id}
+        DELETE
+        FROM dish_review
+        WHERE id = #{id}
     </delete>
+
+    <select id="listDishIdsByRating" resultType="long">
+        SELECT dish_id
+        FROM dish_review
+        GROUP BY dish_id
+        ORDER BY AVG(rating) DESC
+        LIMIT #{num};
+    </select>
 
     <select id="countAdmin" resultType="long">
         SELECT COUNT(*)

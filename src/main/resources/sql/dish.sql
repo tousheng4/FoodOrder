@@ -1,17 +1,10 @@
 USE food_order;
-
-delete from dish;
 -- 如需重复导入时避免冲突，可手动执行：
 -- DELETE FROM dish WHERE id BETWEEN 30001 AND 30110;
 
 INSERT INTO dish
 (id, name, description, image, price, category_id, status, deleted, created_at, updated_at)
 VALUES
-    (1, '番茄炒蛋', '番茄炒蛋：酸甜裹满软嫩蛋块，家常鲜香一口熨帖胃袋', 'http://localhost:8080/images/1.jpg', 12.00, 1, 1, 0, NOW(), NOW()),
-    (2, '鱼香肉丝', '咸甜酸辣裹紧脆嫩肉丝，鱼香勾得筷子停不下来', 'http://localhost:8080/images/2.jpg', 18.00, 1, 1, 0, NOW(), NOW()),
-    (3, '炸鸡块', '外壳咔嚓脆响，嫩肉裹满热乎香气，咬开全是满足', 'http://localhost:8080/images/3.jpg', 15.00, 2, 1, 0, NOW(), NOW()),
-    (4, '冰可乐', '冰爽气泡撞开腻感，一口透心凉直接配餐封神', 'http://localhost:8080/images/4.jpg', 5.00, 3, 1, 0, NOW(), NOW()),
-    (5, '香辣鸡丁', '鲜辣裹紧滑嫩鸡丁，越嚼越香越吃越上头', 'http://localhost:8080/images/5.jpg', 28.00, 1, 1, 0, NOW(), NOW()),
     (30001, '水煮牛肉', '经典麻辣水煮牛肉，花椒香浓，配米饭绝佳', 'http://localhost:8080/images/30001.jpg', 38.00, 20001, 1, 0, NOW(), NOW()),
     (30002, '麻婆豆腐', '鲜嫩豆腐配牛肉末，麻辣鲜香，下饭神器', 'http://localhost:8080/images/30002.jpg', 22.00, 20001, 1, 0, NOW(), NOW()),
     (30003, '白切鸡', '肉质嫩滑的白切鸡，蘸料清爽不腻', 'http://localhost:8080/images/30003.jpg', 35.00, 20002, 1, 0, NOW(), NOW()),
